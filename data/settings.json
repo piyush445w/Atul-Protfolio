@@ -1,0 +1,199 @@
+﻿{
+  "name": "Atul Kumar Yadav",
+  "title": "3D Environment Artist",
+  "tagline": "Crafting Worlds Beyond Imagination",
+  "subtitle": "Unreal Engine 5 • Environment Art • 3D Modeling • Texturing • Lighting",
+  "bio": "I am a 3D Environment Artist specializing in modeling, texturing, and lighting for game and animation environments, with a Diploma in 3D Animation from MAAC. I love turning imagination into reality through my artworks — building beautiful environments using Unreal Engine and Maya, from blocking out scenes to detailed texturing and surface work that brings depth and realism to a space. I am currently looking for full-time opportunities as a 3D Environment Artist, where I can contribute to environment art pipelines for games, animation, or VFX projects.",
+  "heroMedia": "",
+  "heroImage": "",
+  "profileImage": "",
+  "image": "",
+  "resumeUrl": "",
+  "heroTitleLines": [
+    "ATUL",
+    "KUMAR",
+    "YADAV"
+  ],
+  "heroBadge": "3D Environment Artist",
+  "footerBrand": "Atul Kumar Yadav — 3D Environment Artist",
+  "footerCopyright": "All rights reserved",
+  "contactDescription": "Looking for opportunities to work as a 3D Environment Artist across games, animation and VFX. Open to full-time opportunities.",
+  "mobileYear": "Portfolio 2026",
+  "sectionLabels": {
+    "about": "Introduction",
+    "work": "Selected Work",
+    "resume": "Experience",
+    "services": "Process",
+    "contact": "Get In Touch"
+  },
+  "resumeSectionTitles": {
+    "summary": "Profile",
+    "experience": "Project Experience",
+    "skills": "Skills",
+    "awards": "Awards",
+    "software": "Software"
+  },
+  "seoTitle": "Atul Kumar Yadav — 3D Environment Artist",
+  "seoDescription": "3D Environment Artist specializing in Unreal Engine 5, 3D modeling, texturing, lighting and game environments.",
+  "ogImage": "",
+  "robots": "index, follow",
+  "email": "",
+  "location": "Ludhiana, Punjab, India",
+  "phone": "",
+  "linkedin": "https://www.linkedin.com/in/atulkumaryadav",
+  "socials": {
+    "linkedin": "https://www.linkedin.com/in/atulkumaryadav",
+    "artstation": "https://www.artstation.com/atulkumar62"
+  },
+  "skills": [
+    "Environment Art",
+    "Environment Modeling",
+    "Level Design",
+    "Scene Assembly",
+    "Modular Environment Creation",
+    "3D Modeling",
+    "Hard Surface Modeling",
+    "Asset Creation",
+    "Sculpting",
+    "Texturing",
+    "PBR Texturing",
+    "Material Creation",
+    "Surface Detailing",
+    "Lighting",
+    "Real-Time Lighting",
+    "Mood & Atmosphere",
+    "Cinematic Lighting",
+    "Unreal Engine 5",
+    "Blueprints",
+    "Environment Setup",
+    "VR Environment Development"
+  ],
+  "awards": [
+    {
+      "event": "Punjab Animation Award",
+      "achievement": "Jury Winner — 3D Environment Art",
+      "date": "April 2025",
+      "description": "Awarded Jury Winner for 3D Environment Art at Punjab Animation Award, MAAC. Created a detailed 3D environment focusing on modeling, texturing and lighting to build a realistic scene, recognized among peers for overall quality and execution.",
+      "associatedWith": "MAAC",
+      "software": ["Maya", "3ds Max", "ZBrush", "Marvelous Designer", "Substance Painter", "Ahoge plugin"]
+    },
+    {
+      "event": "24FPS International Award",
+      "achievement": "Nominee — 3D Character Modeling & Texturing",
+      "date": "December 2025",
+      "description": "Nominated for 3D Character Modeling & Texturing at 24FPS International Award, MAAC. Modeled and textured a character asset with attention to detail in surfacing and material work, shortlisted among top entries in the category.",
+      "associatedWith": "MAAC",
+      "software": ["Maya", "3ds Max", "ZBrush", "Marvelous Designer", "Substance Painter", "Ahoge plugin"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "MAAC",
+      "degree": "Diploma in 3D Animation",
+      "focus": "3D Environment Art",
+      "specialization": "Environment Art & Unreal Engine 5",
+      "period": "2023 – 2026"
+    },
+    {
+      "institution": "Dholewal Sen. Sec. School",
+      "degree": "Higher Secondary",
+      "focus": "Grade XII",
+      "specialization": "Grade XII: 85.4%",
+      "period": "2021 – 2023"
+    }
+  ],
+  "resume": {
+    "name": "Atul Kumar Yadav",
+    "title": "3D Environment Artist",
+    "email": "",
+    "location": "Ludhiana, Punjab, India",
+    "summary": "3D Environment Artist specializing in modeling, texturing, and lighting for game and animation environments. Diploma in 3D Animation from MAAC. Experienced in Unreal Engine 5, Maya, 3ds Max, Substance Painter, and ZBrush. Currently seeking full-time opportunities as a 3D Environment Artist.",
+    "experience": [
+      {
+        "role": "3D Environment Artist",
+        "company": "M-Verse | VR Walkthrough",
+        "period": "May 2026 – Jun 2026",
+        "description": "Collaborated with a team to develop a Virtual Reality project over a 45-day timeline, covering a large-scale environment of approximately 2–3 km in area. Worked across multiple areas of the environment art and level design pipeline in Unreal Engine 5, including environment assembly, texture application, lighting, and Blueprint support.",
+        "type": "project",
+        "highlights": ["Environment assembly", "Texture application", "Lighting", "Unreal Engine 5", "Blueprints", "Level design support"],
+        "software": ["Unreal Engine 5", "Maya", "3ds Max", "Substance Painter"]
+      }
+    ],
+    "skills": [
+      "Environment Art",
+      "Environment Modeling",
+      "Level Design",
+      "Scene Assembly",
+      "Modular Environment Creation",
+      "3D Modeling",
+      "Hard Surface Modeling",
+      "Asset Creation",
+      "Sculpting",
+      "Texturing",
+      "PBR Texturing",
+      "Material Creation",
+      "Surface Detailing",
+      "Lighting",
+      "Real-Time Lighting",
+      "Mood & Atmosphere",
+      "Cinematic Lighting",
+      "Unreal Engine 5",
+      "Blueprints",
+      "Environment Setup",
+      "VR Environment Development"
+    ],
+    "software": [
+      "Unreal Engine 5",
+      "Autodesk Maya",
+      "Autodesk 3ds Max",
+      "ZBrush",
+      "Substance Painter",
+      "Marvelous Designer",
+      "Marmoset Toolbag 5",
+      "Adobe Photoshop"
+    ]
+  },
+  "tools": [
+    "Unreal Engine 5",
+    "Maya",
+    "3ds Max",
+    "ZBrush",
+    "Substance Painter",
+    "Marvelous Designer",
+    "Marmoset Toolbag",
+    "Photoshop"
+  ],
+  "services": [
+    {
+      "id": "environment-art",
+      "title": "Environment Art",
+      "description": "Complete environment art creation for games, animation, and VFX — from concept to final scene assembly."
+    },
+    {
+      "id": "3d-modeling",
+      "title": "3D Modeling",
+      "description": "High-quality 3D modeling for environments, props, and hard surface assets optimized for real-time engines."
+    },
+    {
+      "id": "texturing-materials",
+      "title": "Texturing & Materials",
+      "description": "PBR texturing and material creation using Substance Painter and Designer for photorealistic surfaces."
+    },
+    {
+      "id": "lighting",
+      "title": "Lighting & Atmosphere",
+      "description": "Cinematic lighting and mood setup in Unreal Engine 5 for immersive real-time environments."
+    },
+    {
+      "id": "ue5-setup",
+      "title": "Unreal Engine 5 Setup",
+      "description": "Complete environment setup in UE5 including Blueprints, optimization, and VR-ready pipeline."
+    },
+    {
+      "id": "vr-environment",
+      "title": "VR Environment Development",
+      "description": "Virtual reality environment development with performance optimization and immersive interaction design."
+    }
+  ],
+  "updatedAt": "2026-09-13T16:30:00Z"
+}
