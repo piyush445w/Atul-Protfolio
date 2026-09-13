@@ -1,0 +1,108 @@
+﻿{% extends "admin/base.html" %}
+{% block content %}
+<h1 class="page-title">Experience</h1>
+<div id="exp-form" class="card">
+    <h3 style="margin-bottom: 20px;" id="exp-form-title">Add Experience</h3>
+    <form id="experience-form" onsubmit="saveExperience(event)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="edit_index" id="exp-edit-index" value="">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" name="role" id="exp-role" required>
+            </div>
+            <div class="form-group">
+                <label>Company</label>
+                <input type="text" name="company" id="exp-company" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Period</label>
+            <input type="text" name="period" id="exp-period" placeholder="Jan 2020 - Present">
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" id="exp-desc" rows="3"></textarea>
+        </div>
+        <div class="form-group checkbox-group">
+            <input type="checkbox" name="current" id="exp-current">
+            <label for="exp-current">Current</label>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" onclick="hideExpForm()">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Role</th><th>Company</th><th>Period</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for idx, exp in enumerate(experience_list) %}
+            <tr>
+                <td>{{ exp.role }}</td>
+                <td>{{ exp.company }}</td>
+                <td>{{ exp.period }}</td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="editExperience({{ idx }})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteExperience({{ idx }})">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    function hideExpForm() { document.getElementById('exp-form').classList.add('hidden'); resetExpForm(); }
+    function resetExpForm() {
+        document.getElementById('experience-form').reset();
+        document.getElementById('exp-edit-index').value = '';
+        document.getElementById('exp-form-title').textContent = 'Add Experience';
+    }
+    async function saveExperience(e) {
+        e.preventDefault();
+        const editIndex = document.getElementById('exp-edit-index').value;
+        const data = {
+            role: document.getElementById('exp-role').value,
+            company: document.getElementById('exp-company').value,
+            period: document.getElementById('exp-period').value,
+            description: document.getElementById('exp-desc').value,
+            current: !!document.getElementById('exp-current').checked
+        };
+        const url = editIndex !== '' ? '/api/admin/settings/experience/' + editIndex : '/api/admin/settings/experience';
+        const method = editIndex !== '' ? 'PUT' : 'POST';
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const res = await fetch(url, { method: method, headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf}, body: JSON.stringify(data) });
+        if (res.ok) { location.reload(); } else { alert('Error saving experience'); }
+    }
+    async function editExperience(idx) {
+        const res = await fetch('/api/admin/settings/experience');
+        const list = await res.json();
+        const exp = list[idx];
+        if (!exp) return;
+        document.getElementById('exp-edit-index').value = idx;
+        document.getElementById('exp-role').value = exp.role || '';
+        document.getElementById('exp-company').value = exp.company || '';
+        document.getElementById('exp-period').value = exp.period || '';
+        document.getElementById('exp-desc').value = exp.description || '';
+        document.getElementById('exp-current').checked = !!exp.current;
+        document.getElementById('exp-form-title').textContent = 'Edit Experience';
+        document.getElementById('exp-form').classList.remove('hidden');
+    }
+    async function deleteExperience(idx) {
+        if (!confirm('Are you sure?')) return;
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const res = await fetch('/api/admin/settings/experience/' + idx, { method: 'DELETE', headers: {'X-CSRFToken': csrf} });
+        if (res.ok) { location.reload(); } else { alert('Error deleting experience'); }
+    }
+</script>
+{% endblock %}

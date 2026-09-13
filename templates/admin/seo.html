@@ -1,0 +1,45 @@
+﻿{% extends "admin/base.html" %}
+{% block content %}
+<h1 class="page-title">SEO Settings</h1>
+<div class="card">
+    <form onsubmit="saveSEO(event)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label>SEO Title</label>
+            <input type="text" name="seoTitle" value="{{ settings.seoTitle }}">
+        </div>
+        <div class="form-group">
+            <label>SEO Description</label>
+            <textarea name="seoDescription">{{ settings.seoDescription }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>OG Image</label>
+            <input type="text" name="ogImage" value="{{ settings.ogImage }}">
+        </div>
+        <div class="form-group">
+            <label>Robots</label>
+            <input type="text" name="robots" value="{{ settings.robots }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save SEO</button>
+    </form>
+</div>
+<script>
+    async function saveSEO(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = {
+            seoTitle: form.querySelector('[name=seoTitle]').value,
+            seoDescription: form.querySelector('[name=seoDescription]').value,
+            ogImage: form.querySelector('[name=ogImage]').value,
+            robots: form.querySelector('[name=robots]').value
+        };
+        const csrf = form.querySelector('input[name=csrf_token]').value;
+        const res = await fetch('/admin/seo', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+            body: JSON.stringify(data)
+        });
+        if (res.ok) { alert('SEO saved'); } else { alert('Error saving SEO'); }
+    }
+</script>
+{% endblock %}

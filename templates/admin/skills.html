@@ -1,0 +1,54 @@
+﻿{% extends "admin/base.html" %}
+{% block content %}
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<h1 class="page-title">Skills</h1>
+<div class="card">
+    <div class="skill-list" id="skills-list">
+        {% for skill in skills %}
+        <div class="skill-tag">
+            {{ skill }}
+            <button onclick='removeSkill(this, {{ skill|tojson }})'>&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <input type="text" id="new-skill" placeholder="Add a new skill..." style="flex: 1;">
+        <button type="button" class="btn btn-primary" onclick="addSkill()">Add</button>
+    </div>
+</div>
+<script>
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    function addSkill() {
+        const input = document.getElementById('new-skill');
+        const val = input.value.trim();
+        if (!val) return;
+        const div = document.createElement('div');
+        div.className = 'skill-tag';
+        div.innerHTML = val + ' <button onclick="removeSkill(this, \\'' + val + '\\')">&times;</button>';
+        document.getElementById('skills-list').appendChild(div);
+        input.value = '';
+        saveSkills();
+    }
+    function removeSkill(btn, skill) {
+        btn.parentElement.remove();
+        saveSkills();
+    }
+    async function saveSkills() {
+        const skills = [];
+        document.querySelectorAll('#skills-list .skill-tag').forEach(el => {
+            const textNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+            skills.push(textNode ? textNode.textContent.trim() : '');
+        });
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        await fetch('/api/admin/settings/skills', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+            body: JSON.stringify(skills)
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+﻿{% extends "admin/base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Categories</h1>
+    <button class="btn btn-primary" onclick="showForm()">Add Category</button>
+</div>
+<div id="cat-form" class="card hidden">
+    <h3 style="margin-bottom: 20px;" id="form-title">Add Category</h3>
+    <form id="category-form" onsubmit="saveCategory(event)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="edit_id" id="cat-edit-id" value="">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" id="cat-name" required>
+        </div>
+        <div class="form-group">
+            <label>Slug</label>
+            <input type="text" name="slug" id="cat-slug" required>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" onclick="hideForm()">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Slug</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for c in categories %}
+            <tr>
+                <td>{{ c.name }}</td>
+                <td>{{ c.slug }}</td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="editCategory('{{ c.id }}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteCategory('{{ c.id }}')">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    function showForm() { document.getElementById('cat-form').classList.remove('hidden'); }
+    function hideForm() { document.getElementById('cat-form').classList.add('hidden'); resetForm(); }
+    function resetForm() {
+        document.getElementById('category-form').reset();
+        document.getElementById('cat-edit-id').value = '';
+        document.getElementById('form-title').textContent = 'Add Category';
+    }
+    async function saveCategory(e) {
+        e.preventDefault();
+        const editId = document.getElementById('cat-edit-id').value;
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const data = { name: document.getElementById('cat-name').value, slug: document.getElementById('cat-slug').value };
+        const url = editId ? '/api/admin/categories/' + encodeURIComponent(editId) : '/api/admin/categories';
+        const method = editId ? 'PUT' : 'POST';
+        const res = await fetch(url, { method, headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf}, body: JSON.stringify(data) });
+        if (res.ok) { location.reload(); } else { alert('Error saving category'); }
+    }
+    async function editCategory(id) {
+        const res = await fetch('/api/admin/categories');
+        const cats = await res.json();
+        const c = cats.find(x => x.id === id);
+        if (!c) return;
+        document.getElementById('cat-edit-id').value = c.id;
+        document.getElementById('cat-name').value = c.name;
+        document.getElementById('cat-slug').value = c.slug;
+        document.getElementById('form-title').textContent = 'Edit Category';
+        document.getElementById('cat-form').classList.remove('hidden');
+    }
+    async function deleteCategory(id) {
+        if (!confirm('Are you sure?')) return;
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const res = await fetch('/api/admin/categories/' + encodeURIComponent(id), { method: 'DELETE', headers: {'X-CSRFToken': csrf} });
+        if (res.ok) { location.reload(); } else { alert('Error deleting category'); }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,176 @@
+﻿{% extends "admin/base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Projects</h1>
+    <button class="btn btn-primary" onclick="showCreateForm()">New Project</button>
+</div>
+<div id="create-form" class="card hidden">
+    <h3 style="margin-bottom: 20px;">Create Project</h3>
+    <form id="project-form" onsubmit="saveProject(event)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="editing_slug" id="editing-slug" value="">
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="form-group">
+            <label>Slug</label>
+            <input type="text" name="slug" id="project-slug" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Category</label>
+                <select name="categoryId">{{ categories|safe }}</select>
+            </div>
+            <div class="form-group">
+                <label>Year</label>
+                <input type="text" name="year" placeholder="2024">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <input type="text" name="role" placeholder="3D Artist">
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" placeholder="Project description..."></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Software (comma separated)</label>
+                <input type="text" name="software" id="project-software" placeholder="Maya, Unreal Engine">
+            </div>
+            <div class="form-group">
+                <label>Sort Order</label>
+                <input type="number" name="sortOrder" value="0">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="featured" id="project-featured">
+                <label for="project-featured">Featured</label>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="published" id="project-published" checked>
+                <label for="project-published">Published</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Cover Image</label>
+            <input type="text" name="coverImage" placeholder="/assets/projects/.../cover.svg">
+        </div>
+        <div class="form-group">
+            <label>Hero Image</label>
+            <input type="text" name="heroImage" placeholder="/assets/projects/.../hero.svg">
+        </div>
+        <div class="form-group">
+            <label>Gallery Images (one URL per line)</label>
+            <textarea name="gallery" id="project-gallery" rows="3" placeholder="https://..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Video URL</label>
+            <input type="text" name="video" placeholder="https://...">
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" class="btn btn-primary">Save Project</button>
+            <button type="button" class="btn btn-secondary" onclick="hideCreateForm()">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="card" style="overflow-x: auto;">
+    <table class="projects-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Year</th>
+                <th>Featured</th>
+                <th>Published</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in projects %}
+            <tr>
+                <td>{% if p.coverImage %}<img src="{{ p.coverImage }}" alt="" style="width:28px;height:28px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px;">{% endif %}{{ p.title }}</td>
+                <td>{{ p.categoryId }}</td>
+                <td>{{ p.year or '' }}</td>
+                <td>{{ 'Yes' if p.featured else 'No' }}</td>
+                <td>{{ 'Yes' if p.published else 'No' }}</td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="editProject('{{ p.slug }}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteProject('{{ p.slug }}')">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align:center;color:#9ca3af;">No projects yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    function showCreateForm() { document.getElementById('create-form').classList.remove('hidden'); }
+    function hideCreateForm() { document.getElementById('create-form').classList.add('hidden'); }
+    async function saveProject(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        const obj = {};
+        const csrf = data.get('csrf_token');
+        data.forEach((v, k) => { if (k !== 'csrf_token' && k !== 'editing_slug') obj[k] = v; });
+        obj.software = obj.software ? obj.software.split(',').map(s => s.trim()).filter(Boolean) : [];
+        obj.gallery = obj.gallery ? obj.gallery.split('\n').map(s => s.trim()).filter(Boolean) : [];
+        obj.sortOrder = parseInt(obj.sortOrder) || 0;
+        obj.featured = !!form.querySelector('[name=featured]').checked;
+        obj.published = !!form.querySelector('[name=published]').checked;
+        if (obj.coverImage === '') obj.coverImage = null;
+        if (obj.heroImage === '') obj.heroImage = null;
+        if (obj.video === '') obj.video = null;
+        const editingSlug = data.get('editing_slug');
+        const isEdit = editingSlug && editingSlug.trim() !== '';
+        const url = isEdit ? '/api/admin/projects/' + encodeURIComponent(editingSlug) : '/api/admin/projects';
+        const method = isEdit ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+            method: method,
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+            body: JSON.stringify(obj)
+        });
+        if (res.ok) { location.reload(); } else { alert('Error saving project'); }
+    }
+    async function editProject(slug) {
+        const res = await fetch('/api/admin/projects');
+        const projects = await res.json();
+        const p = projects.find(x => x.slug === slug);
+        if (!p) { alert('Project not found'); return; }
+        document.getElementById('project-slug').value = p.slug || '';
+        document.getElementById('project-software').value = (p.software || []).join(', ');
+        document.getElementById('project-gallery').value = (p.gallery || []).join('\n');
+        document.querySelector('[name=title]').value = p.title || '';
+        document.querySelector('[name=categoryId]').value = p.categoryId || '';
+        document.querySelector('[name=year]').value = p.year || '';
+        document.querySelector('[name=role]').value = p.role || '';
+        document.querySelector('[name=description]').value = p.description || '';
+        document.querySelector('[name=sortOrder]').value = p.sortOrder || 0;
+        document.querySelector('[name=featured]').checked = !!p.featured;
+        document.querySelector('[name=published]').checked = !!p.published;
+        document.querySelector('[name=coverImage]').value = p.coverImage || '';
+        document.querySelector('[name=heroImage]').value = p.heroImage || '';
+        document.querySelector('[name=video]').value = p.video || '';
+        document.getElementById('editing-slug').value = slug;
+        document.getElementById('create-form').classList.remove('hidden');
+    }
+    async function deleteProject(slug) {
+        if (!confirm('Are you sure?')) return;
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const res = await fetch('/api/admin/projects/' + encodeURIComponent(slug), { method: 'DELETE', headers: {'X-CSRFToken': csrf} });
+        if (res.ok) { location.reload(); } else { alert('Error deleting project'); }
+    }
+</script>
+{% endblock %}
