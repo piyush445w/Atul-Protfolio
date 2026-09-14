@@ -19,11 +19,11 @@
     "coverImage": "/images/project-placeholder.svg",
     "heroImage": "/images/project-placeholder.svg",
     "gallery": [],
-    "video": null,
+    "video": "http://127.0.0.1:5000/uploads/hero/ec7cf7b0eeeb996a_Create_a_cinematic_photoreali (2).mp4",
     "optimization": "",
     "credits": [],
     "createdAt": "2026-05-01T00:00:00Z",
-    "updatedAt": "2026-09-14T10:45:45Z",
+    "updatedAt": "2026-09-14T18:40:51Z",
     "responsibilities": [
       "Environment assembly",
       "Texture application",
@@ -33,8 +33,9 @@
       "Level design support"
     ],
     "images": [
-      "/images/project-placeholder.svg",
-      "/uploads/projects/ea302142951bc4b2_Gemini_Generated_Image_o475gdo475gdo475.png"
+      "/uploads/projects/ea302142951bc4b2_Gemini_Generated_Image_o475gdo475gdo475.png",
+      "/uploads/projects/7235b0574bc44a27_ChatGPT Image Sep 14, 2026, 09_02_02 PM.png",
+      "/uploads/projects/ac10c4173aa61163_pngwing.com.png"
     ]
   },
   {

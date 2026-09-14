@@ -381,6 +381,7 @@ function cacheDomElements() {
   dom.contactPhone = document.querySelector('#contact-phone');
   dom.contactLocation = document.querySelector('#contact-location');
   dom.contactLinkedin = document.querySelector('#contact-linkedin');
+  dom.contactArtstation = document.querySelector('#contact-artstation');
   dom.contactSocials = document.querySelector('#contact-socials');
   dom.contactForm = document.querySelector('#contact-form');
   dom.resumeName = document.querySelector('#resume-name');
@@ -448,9 +449,10 @@ function renderProjects() {
   const categoryMap = {};
   state.categories.forEach(cat => { categoryMap[cat.id] = cat.name; });
   let filteredProjects = state.projects;
-  if (state.activeCategory !== 'all') {
+  const activeCategory = dom.projectsContainer ? (dom.projectsContainer.dataset.activeCategory || 'all') : 'all';
+  if (activeCategory !== 'all') {
     filteredProjects = state.projects.filter(
-      project => project.categoryId === state.activeCategory
+      project => project.categoryId === activeCategory
     );
   }
   filteredProjects = filteredProjects.filter(project => project.published !== false);
@@ -605,6 +607,10 @@ function renderContact() {
     dom.contactLinkedin.href = linkedin;
     dom.contactLinkedin.textContent = 'LinkedIn';
   }
+  if (dom.contactArtstation && artstation) {
+    dom.contactArtstation.href = artstation;
+    dom.contactArtstation.textContent = 'ArtStation';
+  }
 }
 
 function renderResume() {
@@ -628,12 +634,6 @@ function renderResume() {
       </div>
     `).join('');
   }
-  if (dom.resumeSkillsList && skills) {
-    dom.resumeSkillsList.innerHTML = skills.slice(0, 10).map(skill => `<span class="resume-skill-tag">${escapeHtml(skill)}</span>`).join('');
-  }
-  if (dom.resumeSoftwareList && software) {
-    dom.resumeSoftwareList.innerHTML = software.slice(0, 8).map(sw => `<span class="resume-software-tag">${escapeHtml(sw)}</span>`).join('');
-  }
   // Make resume sections visible immediately (fix for IntersectionObserver not triggering)
   const resumeSections = document.querySelectorAll(".resume-experience, .resume-skills, .resume-software");
   resumeSections.forEach(section => section.classList.add("resume-visible"));
@@ -642,22 +642,21 @@ function renderResume() {
 function renderSoftwareMarquee() {
   if (!dom.softwareMarquee || !state.software.length) return;
   const activeSoftware = state.software.filter(sw => sw.isActive !== false);
-  dom.softwareMarquee.innerHTML = `
-    <div class="marquee-track">
-      ${activeSoftware.map(sw => `
-        <div class="marquee-item">
-          <span class="marquee-software-name">${escapeHtml(sw.name)}</span>
-        </div>
-      `).join('')}
-    </div>
-    <div class="marquee-track" aria-hidden="true">
-      ${activeSoftware.map(sw => `
-        <div class="marquee-item">
-          <span class="marquee-software-name">${escapeHtml(sw.name)}</span>
-        </div>
-      `).join('')}
-    </div>
-  `;
+  activeSoftware.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  const renderItem = (sw) => {
+    const iconHtml = sw.icon
+      ? '<img src="' + sw.icon + '" alt="' + escapeHtml(sw.name) + '" class="marquee-item-icon" loading="lazy" onerror="this.style.display=\'none\'" />'
+      : '<div class="marquee-item-icon" style="display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted);background:var(--glass-bg);border-radius:var(--radius-sm);">' + (sw.name.charAt(0) || '?') + '</div>';
+    return '<div class="marquee-item">' +
+      iconHtml +
+      '<span class="marquee-item-name">' + escapeHtml(sw.name) + '</span>' +
+      '<span class="marquee-item-category">' + escapeHtml(sw.category || '') + '</span>' +
+      '</div>';
+  };
+
+  const itemsHtml = activeSoftware.map(renderItem).join('');
+  dom.softwareMarquee.innerHTML = itemsHtml + itemsHtml;
 }
 
 function renderCategoryFilters() {
@@ -691,7 +690,9 @@ function updateMetaTags() {
 function handleFilterClick(event) {
   const categoryId = event.target.dataset.category;
   if (!categoryId) return;
-  state.activeCategory = categoryId;
+  if (dom.projectsContainer) {
+    dom.projectsContainer.dataset.activeCategory = categoryId;
+  }
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.category === categoryId);
   });
@@ -807,13 +808,17 @@ function attachProjectEventListeners() {
   document.querySelectorAll('.project-card').forEach(card => {
     card.addEventListener('click', () => {
       const projectId = card.dataset.projectId;
-      handleProjectClick(projectId);
+      if (projectId) {
+        window.location.hash = 'project/' + projectId;
+      }
     });
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         const projectId = card.dataset.projectId;
-        handleProjectClick(projectId);
+        if (projectId) {
+          window.location.hash = 'project/' + projectId;
+        }
       }
     });
   });
@@ -1022,8 +1027,17 @@ function initMobileMenu() {
 
 function initHeroAnimation() {
   if (!dom.hero) return;
-  dom.hero.classList.add('hero-animate');
-  setTimeout(() => dom.hero.classList.add('hero-loaded'), 100);
+  const content = document.getElementById('hero-content');
+  if (content) {
+    content.style.opacity = '1';
+    content.style.transform = 'translateY(0)';
+    content.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+  }
+  const scrollIndicator = document.getElementById('scroll-indicator');
+  if (scrollIndicator) {
+    scrollIndicator.style.opacity = '1';
+    scrollIndicator.style.transition = 'opacity 0.5s ease';
+  }
 }
 
 function initSkillsAnimations() {
@@ -1164,9 +1178,9 @@ async function init() {
     initContactForm();
     initSmoothScroll();
     initModalClose();
-    initRouter();
     initParallax();
     await loadData();
+    initRouter();
     state.lastApiTimestamp = null;
     try {
       const res = await fetch('/api/version');

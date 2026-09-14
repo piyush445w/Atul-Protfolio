@@ -735,6 +735,7 @@ button, input, textarea, select {
 
 .hero-section {
   position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -1673,6 +1674,38 @@ button, input, textarea, select {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+.marquee-item-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  padding: var(--space-2);
+}
+
+.marquee-item-category {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+  letter-spacing: 0.05em;
+}
+
+.software-subsection-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+  margin-top: var(--space-16);
+}
+
+.software-subsection-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* ==========================================================================

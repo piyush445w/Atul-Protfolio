@@ -1,9 +1,9 @@
-ï»¿{
+{
   "name": "Atul Kumar Yadav",
   "title": "3D Environment Artist",
   "tagline": "Crafting Worlds Beyond Imagination",
-  "subtitle": "Unreal Engine 5 â€¢ Environment Art â€¢ 3D Modeling â€¢ Texturing â€¢ Lighting",
-  "bio": "I am a 3D Environment Artist specializing in modeling, texturing, and lighting for game and animation environments, with a Diploma in 3D Animation from MAAC. I love turning imagination into reality through my artworks â€” building beautiful environments using Unreal Engine and Maya, from blocking out scenes to detailed texturing and surface work that brings depth and realism to a space. I am currently looking for full-time opportunities as a 3D Environment Artist, where I can contribute to environment art pipelines for games, animation, or VFX projects.",
+  "subtitle": "Unreal Engine 5 • Environment Art • 3D Modeling • Texturing • Lighting",
+  "bio": "I am a 3D Environment Artist specializing in modeling, texturing, and lighting for game and animation environments, with a Diploma in 3D Animation from MAAC. I love turning imagination into reality through my artworks — building beautiful environments using Unreal Engine and Maya, from blocking out scenes to detailed texturing and surface work that brings depth and realism to a space. I am currently looking for full-time opportunities as a 3D Environment Artist, where I can contribute to environment art pipelines for games, animation, or VFX projects.",
   "heroMedia": "",
   "heroImage": "",
   "profileImage": "",
@@ -15,7 +15,7 @@
     "YADAV"
   ],
   "heroBadge": "3D Environment Artist",
-  "footerBrand": "Atul Kumar Yadav â€” 3D Environment Artist",
+  "footerBrand": "Atul Kumar Yadav — 3D Environment Artist",
   "footerCopyright": "All rights reserved",
   "contactDescription": "Looking for opportunities to work as a 3D Environment Artist across games, animation and VFX. Open to full-time opportunities.",
   "mobileYear": "Portfolio 2026",
@@ -33,7 +33,7 @@
     "awards": "Awards",
     "software": "Software"
   },
-  "seoTitle": "Atul Kumar Yadav â€” 3D Environment Artist",
+  "seoTitle": "Atul Kumar Yadav — 3D Environment Artist",
   "seoDescription": "3D Environment Artist specializing in Unreal Engine 5, 3D modeling, texturing, lighting and game environments.",
   "ogImage": "",
   "robots": "index, follow",
@@ -41,6 +41,7 @@
   "location": "Ludhiana, Punjab, India",
   "phone": "",
   "linkedin": "https://www.linkedin.com/in/atulkumaryadav",
+  "artstation": "https://www.artstation.com/atulkumar62",
   "socials": {
     "linkedin": "https://www.linkedin.com/in/atulkumaryadav",
     "artstation": "https://www.artstation.com/atulkumar62"
@@ -71,7 +72,7 @@
   "awards": [
     {
       "event": "Punjab Animation Award",
-      "achievement": "Jury Winner â€” 3D Environment Art",
+      "achievement": "Jury Winner — 3D Environment Art",
       "date": "April 2025",
       "description": "Awarded Jury Winner for 3D Environment Art at Punjab Animation Award, MAAC. Created a detailed 3D environment focusing on modeling, texturing and lighting to build a realistic scene, recognized among peers for overall quality and execution.",
       "associatedWith": "MAAC",
@@ -79,7 +80,7 @@
     },
     {
       "event": "24FPS International Award",
-      "achievement": "Nominee â€” 3D Character Modeling & Texturing",
+      "achievement": "Nominee — 3D Character Modeling & Texturing",
       "date": "December 2025",
       "description": "Nominated for 3D Character Modeling & Texturing at 24FPS International Award, MAAC. Modeled and textured a character asset with attention to detail in surfacing and material work, shortlisted among top entries in the category.",
       "associatedWith": "MAAC",
@@ -92,14 +93,14 @@
       "degree": "Diploma in 3D Animation",
       "focus": "3D Environment Art",
       "specialization": "Environment Art & Unreal Engine 5",
-      "period": "2023 â€“ 2026"
+      "period": "2023 – 2026"
     },
     {
       "institution": "Dholewal Sen. Sec. School",
       "degree": "Higher Secondary",
       "focus": "Grade XII",
       "specialization": "Grade XII: 85.4%",
-      "period": "2021 â€“ 2023"
+      "period": "2021 – 2023"
     }
   ],
   "resume": {
@@ -112,8 +113,8 @@
       {
         "role": "3D Environment Artist",
         "company": "M-Verse | VR Walkthrough",
-        "period": "May 2026 â€“ Jun 2026",
-        "description": "Collaborated with a team to develop a Virtual Reality project over a 45-day timeline, covering a large-scale environment of approximately 2â€“3 km in area. Worked across multiple areas of the environment art and level design pipeline in Unreal Engine 5, including environment assembly, texture application, lighting, and Blueprint support.",
+        "period": "May 2026 – Jun 2026",
+        "description": "Collaborated with a team to develop a Virtual Reality project over a 45-day timeline, covering a large-scale environment of approximately 2–3 km in area. Worked across multiple areas of the environment art and level design pipeline in Unreal Engine 5, including environment assembly, texture application, lighting, and Blueprint support.",
         "type": "project",
         "highlights": ["Environment assembly", "Texture application", "Lighting", "Unreal Engine 5", "Blueprints", "Level design support"],
         "software": ["Unreal Engine 5", "Maya", "3ds Max", "Substance Painter"]
@@ -167,7 +168,7 @@
     {
       "id": "environment-art",
       "title": "Environment Art",
-      "description": "Complete environment art creation for games, animation, and VFX â€” from concept to final scene assembly."
+      "description": "Complete environment art creation for games, animation, and VFX — from concept to final scene assembly."
     },
     {
       "id": "3d-modeling",
