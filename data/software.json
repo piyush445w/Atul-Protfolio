@@ -1,0 +1,90 @@
+﻿[
+  {
+    "id": "unreal-engine-5",
+    "name": "Unreal Engine 5",
+    "icon": "",
+    "category": "Game Engine",
+    "description": "Real-time 3D creation platform for games and visualizations",
+    "isActive": true,
+    "sortOrder": 1,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "maya",
+    "name": "Autodesk Maya",
+    "icon": "",
+    "category": "3D Skills",
+    "description": "Industry-standard 3D modeling, animation, and rendering software",
+    "isActive": true,
+    "sortOrder": 2,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "3ds-max",
+    "name": "Autodesk 3ds Max",
+    "icon": "",
+    "category": "3D Skills",
+    "description": "3D modeling and rendering software for games and visualization",
+    "isActive": true,
+    "sortOrder": 3,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "zbrush",
+    "name": "ZBrush",
+    "icon": "",
+    "category": "3D Skills",
+    "description": "Digital sculpting and modeling software",
+    "isActive": true,
+    "sortOrder": 4,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "substance-painter",
+    "name": "Substance Painter",
+    "icon": "",
+    "category": "Texturing",
+    "description": "3D texturing software for creating PBR materials",
+    "isActive": true,
+    "sortOrder": 5,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "marvelous-designer",
+    "name": "Marvelous Designer",
+    "icon": "",
+    "category": "3D Skills",
+    "description": "3D clothing design and simulation software",
+    "isActive": true,
+    "sortOrder": 6,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "marmoset-toolbag",
+    "name": "Marmoset Toolbag 5",
+    "icon": "",
+    "category": "Rendering",
+    "description": "3D modeling, texturing, and rendering toolkit",
+    "isActive": true,
+    "sortOrder": 7,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  },
+  {
+    "id": "photoshop",
+    "name": "Adobe Photoshop",
+    "icon": "",
+    "category": "Post Production",
+    "description": "Industry-standard image editing and compositing software",
+    "isActive": true,
+    "sortOrder": 8,
+    "createdAt": "2026-09-13T00:00:00Z",
+    "updatedAt": "2026-09-13T16:30:00Z"
+  }
+]
