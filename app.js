@@ -237,7 +237,8 @@ function getFallbackProjects() {
       coverImage: '/images/project-placeholder.svg',
       heroImage: '/images/project-placeholder.svg',
       gallery: [],
-      video: ''
+      video: '',
+      images: ['/images/project-placeholder.svg', '/assets/projects/reel/hero.svg', '/assets/projects/robot/hero.svg']
     },
     {
       id: 'hospital-corridor',
@@ -253,7 +254,8 @@ function getFallbackProjects() {
       coverImage: '/images/project-placeholder.svg',
       heroImage: '/images/project-placeholder.svg',
       gallery: [],
-      video: ''
+      video: '',
+      images: ['/images/project-placeholder.svg']
     }
   ];
 }
@@ -278,6 +280,23 @@ function getFallbackSoftware() {
     { id: 'photoshop', name: 'Adobe Photoshop', icon: '', category: 'Post Production', description: 'Image editing software', isActive: true, sortOrder: 8 }
   ];
 }
+function normalizeProjectImages(project) {
+  if (Array.isArray(project.images) && project.images.length > 0) {
+    return project.images.filter(url => url && url.trim() !== '');
+  }
+  const images = [];
+  if (project.coverImage) images.push(project.coverImage);
+  if (project.heroImage && project.heroImage !== project.coverImage && !images.includes(project.heroImage)) {
+    images.push(project.heroImage);
+  }
+  if (Array.isArray(project.gallery)) {
+    project.gallery.forEach(img => {
+      if (img && img.trim() !== '' && !images.includes(img)) images.push(img);
+    });
+  }
+  return images.filter(url => url && url.trim() !== '');
+}
+
 
 // ============================================================================
 // API DATA LOADING
@@ -686,58 +705,94 @@ function handleProjectClick(projectId) {
 }
 
 function showProjectDetail(project) {
-  if (!dom.projectModal || !dom.projectModalContent) return;
+  if (!dom.projectModal) return;
   state.activeProjectId = project.id;
   const category = state.categories.find(cat => cat.id === project.categoryId);
-  const categoryName = category ? category.name : 'Project';
-  dom.projectModalContent.innerHTML = `
-    <div class="modal-header">
+  const categoryName = category ? category.name : "Project";
+  const images = normalizeProjectImages(project);
+  const heroImage = images.length > 0 ? images[0] : (project.heroImage || project.coverImage || '/images/project-placeholder.svg');
+
+  const mediaImg = dom.projectModal.querySelector('.project-detail-media img#modal-hero-image');
+  if (mediaImg) {
+    mediaImg.src = heroImage;
+    mediaImg.alt = project.title;
+    mediaImg.onerror = function() { this.src = '/images/project-placeholder.svg'; };
+  }
+
+  const headerEl = dom.projectModal.querySelector('.project-detail-info .modal-header');
+  if (headerEl) {
+    headerEl.innerHTML = `
       <div class="modal-meta">
         <span class="modal-category">${escapeHtml(categoryName)}</span>
-        <span class="modal-year">${escapeHtml(project.year || '')}</span>
+        <span class="modal-year">${escapeHtml(project.year || "")}</span>
       </div>
       <h2 class="modal-title">${escapeHtml(project.title)}</h2>
       <p class="modal-role">${escapeHtml(project.role)}</p>
-    </div>
-    <div class="modal-body">
-      <div class="modal-image">
-        <img src="${escapeHtml(project.heroImage || project.coverImage || '/images/project-placeholder.svg')}" alt="${escapeHtml(project.title)}" onerror="this.src='/images/project-placeholder.svg'" />
-      </div>
-      ${(project.gallery || []).length > 0 ? `
-        <div class="modal-gallery">
-          ${project.gallery.map(img => `<img src="${escapeHtml(img)}" alt="" loading="lazy" onerror="this.style.display='none'" />`).join('')}
+    `;
+  }
+
+  const descEl = dom.projectModal.querySelector('.project-detail-info .modal-description');
+  if (descEl) {
+    descEl.innerHTML = `<p>${escapeHtml(project.description)}</p>`;
+  }
+
+  const softwareEl = dom.projectModal.querySelector('.project-detail-info .modal-software');
+  if (softwareEl) {
+    if (project.software && project.software.length > 0) {
+      softwareEl.innerHTML = `
+        <h4>Software Used</h4>
+        <div class="modal-software-list">
+          ${project.software.map(sw => `<span class="software-tag">${escapeHtml(sw)}</span>`).join('')}
         </div>
-      ` : ''}
-      ${project.video ? `
-        <div class="modal-video">
-          <video controls src="${escapeHtml(project.video)}" style="width:100%;border-radius:8px;margin-top:12px;"></video>
-        </div>
-      ` : ''}
-      <div class="modal-description">
-        <p>${escapeHtml(project.description)}</p>
-      </div>
-      ${project.software && project.software.length > 0 ? `
-        <div class="modal-software">
-          <h4>Software Used</h4>
-          <div class="modal-software-list">
-            ${project.software.map(sw => `<span class="software-tag">${escapeHtml(sw)}</span>`).join('')}
-          </div>
-        </div>
-      ` : ''}
-    </div>
-    <button class="project-detail-close" aria-label="Close modal">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  `;
+      `;
+    } else {
+      softwareEl.innerHTML = '';
+    }
+  }
+
+  const thumbStrip = dom.projectModal.querySelector('.project-detail-thumbnail-strip');
+  if (thumbStrip && images.length > 1) {
+    thumbStrip.innerHTML = images.map((img, idx) => {
+      const activeClass = idx === 0 ? ' active' : '';
+      const ariaSelected = idx === 0 ? ' aria-selected="true"' : '';
+      return `<button class="project-detail-thumbnail${activeClass}" data-src="${escapeHtml(img)}"${ariaSelected}><img src="${escapeHtml(img)}" alt="" loading="lazy" onerror="this.style.display='none'" /></button>`;
+    }).join('');
+  } else if (thumbStrip) {
+    thumbStrip.innerHTML = '';
+  }
+
+  const galleryEl = dom.projectModal.querySelector('.project-detail-gallery');
+  if (galleryEl && images.length > 1) {
+    galleryEl.innerHTML = images.slice(1).map(img =>
+      `<img src="${escapeHtml(img)}" alt="" loading="lazy" onerror="this.style.display='none'" style="width:100%;border-radius:8px;margin-top:12px;" />`
+    ).join('');
+  } else if (galleryEl) {
+    galleryEl.innerHTML = '';
+  }
+
+  const videoEl = dom.projectModal.querySelector('.project-detail-video');
+  if (videoEl) {
+    if (project.video) {
+      videoEl.innerHTML = `<video controls src="${escapeHtml(project.video)}" style="width:100%;border-radius:8px;margin-top:12px;"></video>`;
+    } else {
+      videoEl.innerHTML = '';
+    }
+  }
+
   dom.projectModal.classList.add('active');
   document.body.style.overflow = 'hidden';
-  const closeBtn = dom.projectModal.querySelector('.project-detail-close');
-  if (closeBtn) closeBtn.addEventListener('click', closeProjectModal);
-  dom.projectModal.addEventListener('click', (e) => {
-    if (e.target === dom.projectModal) closeProjectModal();
+
+  document.querySelectorAll('.project-detail-thumbnail').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const heroImg = document.getElementById('modal-hero-image');
+      if (heroImg) heroImg.src = thumb.dataset.src;
+      document.querySelectorAll('.project-detail-thumbnail').forEach(t => {
+        t.classList.remove('active');
+        t.removeAttribute('aria-selected');
+      });
+      thumb.classList.add('active');
+      thumb.setAttribute('aria-selected', 'true');
+    });
   });
 }
 
@@ -1017,6 +1072,9 @@ function initSmoothScroll() {
 
 function initModalClose() {
   if (dom.projectModalClose) dom.projectModalClose.addEventListener('click', closeProjectModal);
+  if (dom.projectModal) dom.projectModal.addEventListener('click', (e) => {
+    if (e.target === dom.projectModal) closeProjectModal();
+  });
 }
 
 function initParallax() {

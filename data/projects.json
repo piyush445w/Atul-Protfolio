@@ -10,16 +10,32 @@
     "featured": true,
     "published": true,
     "sortOrder": 1,
-    "software": ["Unreal Engine 5", "Maya", "3ds Max", "Substance Painter"],
+    "software": [
+      "Unreal Engine 5",
+      "Maya",
+      "3ds Max",
+      "Substance Painter"
+    ],
     "coverImage": "/images/project-placeholder.svg",
     "heroImage": "/images/project-placeholder.svg",
     "gallery": [],
-    "video": "",
+    "video": null,
     "optimization": "",
     "credits": [],
     "createdAt": "2026-05-01T00:00:00Z",
-    "updatedAt": "2026-06-01T00:00:00Z",
-    "responsibilities": ["Environment assembly", "Texture application", "Lighting", "Unreal Engine 5", "Blueprints", "Level design support"]
+    "updatedAt": "2026-09-14T10:45:45Z",
+    "responsibilities": [
+      "Environment assembly",
+      "Texture application",
+      "Lighting",
+      "Unreal Engine 5",
+      "Blueprints",
+      "Level design support"
+    ],
+    "images": [
+      "/images/project-placeholder.svg",
+      "/uploads/projects/ea302142951bc4b2_Gemini_Generated_Image_o475gdo475gdo475.png"
+    ]
   },
   {
     "id": "hospital-corridor",
@@ -32,7 +48,11 @@
     "featured": false,
     "published": true,
     "sortOrder": 2,
-    "software": ["3ds Max", "Substance Painter", "Photoshop"],
+    "software": [
+      "3ds Max",
+      "Substance Painter",
+      "Photoshop"
+    ],
     "coverImage": "/images/project-placeholder.svg",
     "heroImage": "/images/project-placeholder.svg",
     "gallery": [],
@@ -40,6 +60,9 @@
     "optimization": "",
     "credits": [],
     "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "updatedAt": "2024-01-01T00:00:00Z",
+    "images": [
+      "/images/project-placeholder.svg"
+    ]
   }
 ]

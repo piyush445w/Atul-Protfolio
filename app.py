@@ -48,20 +48,12 @@ def _cache_static(response):
         response.cache_control.public = True
     return response
 
-@app.after_request
-def _no_cache_api(response):
-    if request.path.startswith("/api/"):
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
-    return response
-
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
 PUBLIC_DIR = os.path.join(ROOT_DIR, "public")
 UPLOADS_DIR = os.path.join(ROOT_DIR, "uploads")
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'chiragm7622')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Atul Kumar@1')
 
 _login_attempts = {}
 
@@ -186,6 +178,25 @@ def _slugify(text):
     text = re.sub(r"[-\s]+", "-", text)
     return text.strip("-")
 
+
+def _normalize_project_images(data, existing=None):
+    if "images" in data:
+        return [str(img) for img in data.get("images", []) if str(img).strip()]
+    if existing and "images" in existing:
+        return [str(img) for img in existing["images"] if str(img).strip()]
+    images = []
+    cover = data.get("coverImage") or data.get("image", "")
+    if cover and str(cover).strip():
+        images.append(str(cover).strip())
+    hero = data.get("heroImage", "")
+    if hero and str(hero).strip() and str(hero).strip() not in images:
+        images.append(str(hero).strip())
+    gallery = data.get("gallery", [])
+    for img in gallery:
+        if img and str(img).strip() and str(img).strip() not in images:
+            images.append(str(img).strip())
+    return images
+
 def _ensure_dirs():
     for d in [DATA_DIR, PUBLIC_DIR, UPLOADS_DIR, os.path.join(UPLOADS_DIR, "projects"), os.path.join(UPLOADS_DIR, "hero")]:
         os.makedirs(d, exist_ok=True)
@@ -226,22 +237,9 @@ def admin_static(filename):
 def health():
     return jsonify({"status": "ok"}), 200
 
-@app.route("/api/version")
-def api_version():
-    return jsonify({"timestamp": now_iso(), "version": "1"}), 200
-
 @app.route("/api/settings", methods=["GET"])
 def api_get_settings():
     return jsonify(_get_settings())
-
-@app.route("/api/settings", methods=["PUT"])
-def api_put_settings():
-    data = request.get_json(force=True) or {}
-    settings = _get_settings()
-    settings.update(data)
-    settings["updatedAt"] = now_iso()
-    _save_settings(settings)
-    return jsonify(settings)
 
 @app.route("/api/projects", methods=["GET"])
 def api_get_projects():
@@ -426,7 +424,7 @@ def api_admin_create_project():
         "role": data.get("role", ""),
         "description": data.get("description", ""),
         "featured": data.get("featured", False),
-        "published": data.get("published", True),
+        "published": data.get("published", False),
         "sortOrder": data.get("sortOrder", 0),
         "software": data.get("software", []),
         "coverImage": data.get("coverImage") or data.get("image", ""),
@@ -435,6 +433,7 @@ def api_admin_create_project():
         "video": data.get("video", ""),
         "optimization": data.get("optimization", ""),
         "credits": data.get("credits", []),
+        "images": _normalize_project_images(data),
         "createdAt": now,
         "updatedAt": now
     }
@@ -450,6 +449,11 @@ def api_admin_update_project(slug):
     projects = _get_projects()
     for i, p in enumerate(projects):
         if p.get("slug") == slug:
+            if "images" in data:
+                p["images"] = [str(img) for img in data.get("images", []) if str(img).strip()]
+                del data["images"]
+            elif "images" not in p:
+                p["images"] = _normalize_project_images(data, p)
             p.update(data)
             if "image" in data and "coverImage" not in data:
                 p["coverImage"] = data.get("image", "")
@@ -836,4 +840,5 @@ if __name__ == "__main__":
         if missing:
             raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
     app.run(host="0.0.0.0", port=port, debug=debug)
+
 

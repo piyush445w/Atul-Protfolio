@@ -307,13 +307,20 @@
 
     </main>
 
-    <div id="project-detail-modal" class="project-detail-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="Project detail">
+    <div id="project-detail-modal" class="project-detail-overlay" role="dialog" aria-modal="true" aria-label="Project detail">
         <div class="project-detail-content">
             <button class="project-detail-close" aria-label="Close project detail">&times;</button>
             <div class="project-detail-layout">
-                <div class="project-detail-media"></div>
+                <div class="project-detail-media">
+                    <img id="modal-hero-image" src="" alt="" />
+                </div>
                 <div class="project-detail-sidebar">
-                    <div class="project-detail-info"></div>
+                    <div class="project-detail-info">
+                        <div class="modal-header"></div>
+                        <div class="project-detail-thumbnail-strip" aria-hidden="true"></div>
+                        <div class="modal-description"></div>
+                        <div class="modal-software"></div>
+                    </div>
                     <div class="project-detail-gallery"></div>
                     <div class="project-detail-video"></div>
                 </div>

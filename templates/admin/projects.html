@@ -68,6 +68,18 @@
             <textarea name="gallery" id="project-gallery" rows="3" placeholder="https://..."></textarea>
         </div>
         <div class="form-group">
+            <label>Project Images (one URL per line)</label>
+            <textarea name="images" id="project-images" rows="3" placeholder="https://... or /uploads/projects/..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Direct Upload to Project</label>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <input type="file" id="project-upload-file" accept="image/*,video/*" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #e0e0e0; padding: 8px;">
+                <button type="button" class="btn btn-secondary" onclick="uploadToProject()">Upload & Add to Images</button>
+            </div>
+            <p style="font-size: 12px; color: #6b7280; margin-top: 6px;">File uploads go directly to this project's media folder.</p>
+        </div>
+        <div class="form-group">
             <label>Video URL</label>
             <input type="text" name="video" placeholder="https://...">
         </div>
@@ -127,6 +139,7 @@
         data.forEach((v, k) => { if (k !== 'csrf_token' && k !== 'editing_slug') obj[k] = v; });
         obj.software = obj.software ? obj.software.split(',').map(s => s.trim()).filter(Boolean) : [];
         obj.gallery = obj.gallery ? obj.gallery.split('\n').map(s => s.trim()).filter(Boolean) : [];
+        obj.images = obj.images ? obj.images.split('\n').map(s => s.trim()).filter(Boolean) : [];
         obj.sortOrder = parseInt(obj.sortOrder) || 0;
         obj.featured = !!form.querySelector('[name=featured]').checked;
         obj.published = !!form.querySelector('[name=published]').checked;
@@ -152,6 +165,7 @@
         document.getElementById('project-slug').value = p.slug || '';
         document.getElementById('project-software').value = (p.software || []).join(', ');
         document.getElementById('project-gallery').value = (p.gallery || []).join('\n');
+        document.getElementById('project-images').value = (p.images || []).join('\n');
         document.querySelector('[name=title]').value = p.title || '';
         document.querySelector('[name=categoryId]').value = p.categoryId || '';
         document.querySelector('[name=year]').value = p.year || '';
@@ -165,6 +179,40 @@
         document.querySelector('[name=video]').value = p.video || '';
         document.getElementById('editing-slug').value = slug;
         document.getElementById('create-form').classList.remove('hidden');
+    }
+    async function uploadToProject() {
+        const fileInput = document.getElementById('project-upload-file');
+        const file = fileInput.files[0];
+        if (!file) { alert('Please select a file first'); return; }
+        const csrf = document.querySelector('input[name=csrf_token]').value;
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('folder', 'projects');
+        const btn = document.querySelector('button[onclick="uploadToProject()"]');
+        const originalText = btn.textContent;
+        btn.textContent = 'Uploading...';
+        btn.disabled = true;
+        try {
+            const res = await fetch('/admin/upload', {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrf},
+                body: fd
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const imagesField = document.getElementById('project-images');
+                const current = imagesField.value.trim();
+                imagesField.value = current ? current + '\n' + data.url : data.url;
+                fileInput.value = '';
+            } else {
+                alert('Upload failed');
+            }
+        } catch (e) {
+            alert('Upload error: ' + e.message);
+        } finally {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
     }
     async function deleteProject(slug) {
         if (!confirm('Are you sure?')) return;
