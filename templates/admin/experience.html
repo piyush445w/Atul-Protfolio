@@ -1,7 +1,10 @@
 ﻿{% extends "admin/base.html" %}
 {% block content %}
-<h1 class="page-title">Experience</h1>
-<div id="exp-form" class="card">
+<div class="page-header">
+    <h1 class="page-title">Experience</h1>
+    <button class="btn btn-primary" onclick="showExpForm()">Add Experience</button>
+</div>
+<div id="exp-form" class="card hidden">
     <h3 style="margin-bottom: 20px;" id="exp-form-title">Add Experience</h3>
     <form id="experience-form" onsubmit="saveExperience(event)">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -62,6 +65,7 @@
         div.textContent = text;
         return div.innerHTML;
     }
+    function showExpForm() { document.getElementById('exp-form').classList.remove('hidden'); }
     function hideExpForm() { document.getElementById('exp-form').classList.add('hidden'); resetExpForm(); }
     function resetExpForm() {
         document.getElementById('experience-form').reset();

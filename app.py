@@ -216,23 +216,6 @@ def index():
 def serve_uploads(filename):
     return send_from_directory(UPLOADS_DIR, filename)
 
-@app.route("/<path:filename>")
-def static_files(filename):
-    root_path = os.path.join(ROOT_DIR, filename)
-    if os.path.isfile(root_path):
-        return send_from_directory(ROOT_DIR, filename)
-    # Handle paths starting with public/ by serving from PUBLIC_DIR
-    if filename.startswith("public/"):
-        public_filename = filename[len("public/"):]
-        public_path = os.path.join(PUBLIC_DIR, public_filename)
-        if os.path.isfile(public_path):
-            return send_from_directory(PUBLIC_DIR, public_filename)
-    abort(404)
-
-@app.route("/admin/static/<path:filename>")
-def admin_static(filename):
-    return send_from_directory(ROOT_DIR, filename)
-
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"}), 200
@@ -240,6 +223,10 @@ def health():
 @app.route("/api/settings", methods=["GET"])
 def api_get_settings():
     return jsonify(_get_settings())
+
+@app.route("/api/version")
+def api_version():
+    return jsonify({"timestamp": now_iso()})
 
 @app.route("/api/projects", methods=["GET"])
 def api_get_projects():
@@ -830,6 +817,22 @@ def admin_seo_put():
     settings["updatedAt"] = now_iso()
     _save_settings(settings)
     return jsonify(settings)
+
+@app.route("/<path:filename>")
+def static_files(filename):
+    blocked_prefixes = ("data/", "templates/", "app.py", "wsgi.py", "requirements.txt", "Procfile", "render.yaml", ".git", "__pycache__")
+    if any(filename == p.rstrip("/") or filename.startswith(p) for p in blocked_prefixes):
+        abort(404)
+    root_path = os.path.join(ROOT_DIR, filename)
+    if os.path.isfile(root_path):
+        return send_from_directory(ROOT_DIR, filename)
+    # Handle paths starting with public/ by serving from PUBLIC_DIR
+    if filename.startswith("public/"):
+        public_filename = filename[len("public/"):]
+        public_path = os.path.join(PUBLIC_DIR, public_filename)
+        if os.path.isfile(public_path):
+            return send_from_directory(PUBLIC_DIR, public_filename)
+    abort(404)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

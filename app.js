@@ -616,6 +616,13 @@ function renderContact() {
 function renderResume() {
   if (!state.settings || !state.settings.resume) return;
   const { summary, experience, skills, software } = state.settings.resume;
+  if (dom.resumeName) dom.resumeName.textContent = state.settings.resume.name || state.settings.name || '';
+  if (dom.resumeTitle) dom.resumeTitle.textContent = state.settings.resume.title || state.settings.title || '';
+  if (dom.resumeEmail && state.settings.resume.email) {
+    dom.resumeEmail.textContent = state.settings.resume.email;
+    dom.resumeEmail.href = 'mailto:' + state.settings.resume.email;
+  }
+  if (dom.resumeLocation && state.settings.resume.location) dom.resumeLocation.textContent = state.settings.resume.location;
   if (dom.resumeSummary && summary) dom.resumeSummary.textContent = summary;
   if (dom.resumeExperienceList && experience && Array.isArray(experience)) {
     dom.resumeExperienceList.innerHTML = experience.map((exp, index) => `
