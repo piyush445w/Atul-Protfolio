@@ -20,6 +20,7 @@ const CONFIG = {
     CATEGORIES: '/api/categories',
     SOFTWARE: '/api/software',
   },
+  POLL_INTERVAL: 30000,
   LOADER_TIMEOUT: 5000,
   PARTICLE_COUNT: 80,
   CURSOR_SIZE: 8,
@@ -292,7 +293,10 @@ async function fetchApi(endpoint, fallbackFn) {
     console.log(`[API] Loaded: ${endpoint}`);
     return data;
   } catch (error) {
-    console.warn(`[API] Failed to load ${endpoint}, using fallback:`, error.message);
+    console.error(`[API] Failed to load ${endpoint}, using fallback:`, error.message);
+    if (endpoint === '/api/projects' || endpoint === '/api/settings') {
+      document.body.classList.add('api-fallback-active');
+    }
     return fallbackFn();
   }
 }
@@ -699,6 +703,16 @@ function showProjectDetail(project) {
       <div class="modal-image">
         <img src="${escapeHtml(project.heroImage || project.coverImage || '/images/project-placeholder.svg')}" alt="${escapeHtml(project.title)}" onerror="this.src='/images/project-placeholder.svg'" />
       </div>
+      ${(project.gallery || []).length > 0 ? `
+        <div class="modal-gallery">
+          ${project.gallery.map(img => `<img src="${escapeHtml(img)}" alt="" loading="lazy" onerror="this.style.display='none'" />`).join('')}
+        </div>
+      ` : ''}
+      ${project.video ? `
+        <div class="modal-video">
+          <video controls src="${escapeHtml(project.video)}" style="width:100%;border-radius:8px;margin-top:12px;"></video>
+        </div>
+      ` : ''}
       <div class="modal-description">
         <p>${escapeHtml(project.description)}</p>
       </div>
@@ -1095,6 +1109,25 @@ async function init() {
     initRouter();
     initParallax();
     await loadData();
+    state.lastApiTimestamp = null;
+    try {
+      const res = await fetch('/api/version');
+      if (res.ok) state.lastApiTimestamp = (await res.json()).timestamp;
+    } catch (e) {}
+    setInterval(async () => {
+      try {
+        const res = await fetch('/api/version');
+        if (res.ok) {
+          const { timestamp } = await res.json();
+          if (timestamp !== state.lastApiTimestamp) {
+            await loadData();
+            state.lastApiTimestamp = timestamp;
+          }
+        }
+      } catch (e) {
+        // Silently ignore poll errors
+      }
+    }, CONFIG.POLL_INTERVAL);
     initIntersectionObservers();
     hideLoader();
     forceHideLoader();

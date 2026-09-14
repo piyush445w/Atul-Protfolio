@@ -48,6 +48,14 @@ def _cache_static(response):
         response.cache_control.public = True
     return response
 
+@app.after_request
+def _no_cache_api(response):
+    if request.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
@@ -218,9 +226,22 @@ def admin_static(filename):
 def health():
     return jsonify({"status": "ok"}), 200
 
+@app.route("/api/version")
+def api_version():
+    return jsonify({"timestamp": now_iso(), "version": "1"}), 200
+
 @app.route("/api/settings", methods=["GET"])
 def api_get_settings():
     return jsonify(_get_settings())
+
+@app.route("/api/settings", methods=["PUT"])
+def api_put_settings():
+    data = request.get_json(force=True) or {}
+    settings = _get_settings()
+    settings.update(data)
+    settings["updatedAt"] = now_iso()
+    _save_settings(settings)
+    return jsonify(settings)
 
 @app.route("/api/projects", methods=["GET"])
 def api_get_projects():
@@ -405,7 +426,7 @@ def api_admin_create_project():
         "role": data.get("role", ""),
         "description": data.get("description", ""),
         "featured": data.get("featured", False),
-        "published": data.get("published", False),
+        "published": data.get("published", True),
         "sortOrder": data.get("sortOrder", 0),
         "software": data.get("software", []),
         "coverImage": data.get("coverImage") or data.get("image", ""),
@@ -815,5 +836,4 @@ if __name__ == "__main__":
         if missing:
             raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
     app.run(host="0.0.0.0", port=port, debug=debug)
-
 
