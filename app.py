@@ -54,7 +54,7 @@ def _cache_static(response):
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
 PUBLIC_DIR = os.path.join(ROOT_DIR, "public")
-UPLOADS_DIR = os.path.join(ROOT_DIR, "uploads")
+UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Atul Kumar@1')
 
 _login_attempts = {}
