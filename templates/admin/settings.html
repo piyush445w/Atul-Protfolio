@@ -135,6 +135,10 @@
                 <input type="file" name="file" id="hero-image-file" accept="image/*" required style="display: none;">
                 <p id="hero-drop-name" style="margin-top:8px;font-size:13px;color:#6366f1;"></p>
             </div>
+            <div class="upload-progress" id="hero-upload-progress">
+                <div class="upload-progress-bar" id="hero-upload-progress-bar"></div>
+                <span class="upload-progress-text" id="hero-upload-progress-text">0%</span>
+            </div>
         </div>
         <div style="display: flex; gap: 12px;">
             <button type="button" class="btn btn-primary" onclick="uploadHeroImage()">Upload & Set as Hero</button>
@@ -266,19 +270,67 @@
         });
         if (res.ok) { alert('Settings saved'); } else { alert('Error saving settings'); }
     }
-    async function uploadHeroImage() {
+    async function uploadHeroImage(e) {
+        if (e && e.preventDefault) e.preventDefault();
         const form = document.getElementById("hero-image-form");
         const fd = new FormData(form);
         const csrf = form.querySelector('input[name=csrf_token]').value;
-        const res = await fetch('/api/admin/hero-image', { method: 'POST', headers: {'X-CSRFToken': csrf}, body: fd });
-        if (res.ok) {
-            const data = await res.json();
-            const heroInput = document.getElementById('settings-heroImage');
-            if (heroInput) heroInput.value = data.settings.heroImage || '';
-            location.reload();
-        } else {
-            const err = await res.json();
-            alert('Upload failed: ' + (err.error || 'Unknown error'));
+        const progressContainer = document.getElementById('hero-upload-progress');
+        const progressBar = document.getElementById('hero-upload-progress-bar');
+        const progressText = document.getElementById('hero-upload-progress-text');
+        const btn = document.querySelector('button[onclick="uploadHeroImage()"]');
+        const originalText = btn ? btn.textContent : 'Upload & Set as Hero';
+        
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+        }
+        progressContainer.classList.add('active');
+        progressBar.style.width = '0%';
+        progressText.textContent = '0%';
+        
+        try {
+            const res = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/admin/hero-image', true);
+                xhr.setRequestHeader('X-CSRFToken', csrf);
+                xhr.upload.onprogress = function(ev) {
+                    if (ev.lengthComputable) {
+                        const percent = Math.round((ev.loaded / ev.total) * 100);
+                        progressBar.style.width = percent + '%';
+                        progressText.textContent = percent + '%';
+                    }
+                };
+                xhr.onload = () => resolve({ status: xhr.status, response: xhr.responseText });
+                xhr.onerror = () => reject(new Error('Upload error'));
+                xhr.send(fd);
+            });
+            
+            if (res.status === 200) {
+                const data = JSON.parse(res.response);
+                const heroInput = document.getElementById('settings-heroImage');
+                if (heroInput) heroInput.value = data.settings.heroImage || '';
+                progressContainer.classList.remove('active');
+                // Notify other tabs
+                if (window.BroadcastChannel) {
+                    const bc = new BroadcastChannel('portfolio-updates');
+                    bc.postMessage({ type: 'hero-updated', timestamp: Date.now() });
+                    bc.close();
+                }
+                location.reload();
+            } else {
+                progressContainer.classList.remove('active');
+                const err = await new Promise(r => { try { r(JSON.parse(res.response)); } catch(e) { r({}); } });
+                alert('Upload failed: ' + (err.error || 'Unknown error'));
+            }
+        } catch (e) {
+            progressContainer.classList.remove('active');
+            alert('Upload error: ' + e.message);
+        } finally {
+            if (btn) {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
         }
     }
     async function clearHeroImage() {
@@ -333,4 +385,32 @@
         }
     })();
 </script>
+    <style>
+        .upload-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+            display: none;
+        }
+        .upload-progress.active {
+            display: block;
+        }
+        .upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.2s ease;
+            width: 0%;
+        }
+        .upload-progress-text {
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+    </style>
 {% endblock %}

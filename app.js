@@ -1193,6 +1193,16 @@ async function init() {
       const res = await fetch('/api/version');
       if (res.ok) state.lastApiTimestamp = (await res.json()).timestamp;
     } catch (e) {}
+    // BroadcastChannel for immediate cross-tab sync from admin actions
+    if (window.BroadcastChannel) {
+        const bc = new BroadcastChannel('portfolio-updates');
+        bc.onmessage = async (event) => {
+            if (event.data && event.data.type) {
+                console.log('[Sync] Received update:', event.data.type);
+                await loadData();
+            }
+        };
+    }
     setInterval(async () => {
       try {
         const res = await fetch('/api/version');

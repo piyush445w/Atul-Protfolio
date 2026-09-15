@@ -23,7 +23,7 @@ logger = logging.getLogger("chirag-portfolio")
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 1000 * 1024 * 1024  # 1000MB
 
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "").strip()
 if ALLOWED_ORIGINS:
@@ -31,6 +31,8 @@ if ALLOWED_ORIGINS:
 else:
     origins = ["*"]
 CORS(app, resources={r"/api/*": {"origins": origins}})
+
+ALLOWED_UPLOAD_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "webp", "mp4", "mov", "avi", "webm", "mkv", "svg"}
 
 @app.after_request
 def _security_headers(response):
@@ -708,12 +710,20 @@ def admin_upload():
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
     filename = secrets.token_hex(8) + "_" + file.filename
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if ext not in ALLOWED_UPLOAD_EXTENSIONS:
+        return jsonify({"error": "Invalid file type. Allowed: " + ", ".join(sorted(ALLOWED_UPLOAD_EXTENSIONS))}), 400
     upload_dir = os.path.join(UPLOADS_DIR, folder)
     os.makedirs(upload_dir, exist_ok=True)
     path = os.path.join(upload_dir, filename)
-    file.save(path)
-    size = os.path.getsize(path)
-    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > app.config["MAX_CONTENT_LENGTH"]:
+        return jsonify({"error": "File too large."}), 413
+    import shutil
+    with open(path, "wb") as f:
+        shutil.copyfileobj(file, f, length=65536)
     media_item = {
         "id": filename,
         "filename": file.filename,
@@ -738,12 +748,20 @@ def api_admin_hero_image():
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
     filename = secrets.token_hex(8) + "_" + file.filename
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if ext not in ALLOWED_UPLOAD_EXTENSIONS:
+        return jsonify({"error": "Invalid file type. Allowed: " + ", ".join(sorted(ALLOWED_UPLOAD_EXTENSIONS))}), 400
     hero_dir = os.path.join(UPLOADS_DIR, "hero")
     os.makedirs(hero_dir, exist_ok=True)
     path = os.path.join(hero_dir, filename)
-    file.save(path)
-    size = os.path.getsize(path)
-    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > app.config["MAX_CONTENT_LENGTH"]:
+        return jsonify({"error": "File too large."}), 413
+    import shutil
+    with open(path, "wb") as f:
+        shutil.copyfileobj(file, f, length=65536)
     media_item = {
         "id": filename,
         "filename": file.filename,
@@ -791,14 +809,16 @@ def api_admin_upload_software_icon():
     file.seek(0, 2)
     size = file.tell()
     file.seek(0)
-    if size > 2 * 1024 * 1024:
-        return jsonify({"error": "File too large. Maximum 2MB."}), 400
+    if size > 100 * 1024 * 1024:
+        return jsonify({"error": "File too large. Maximum 100MB."}), 400
 
     safe_name = secrets.token_hex(8) + "." + ext
     upload_dir = os.path.join(UPLOADS_DIR, "software")
     os.makedirs(upload_dir, exist_ok=True)
     path = os.path.join(upload_dir, safe_name)
-    file.save(path)
+    import shutil
+    with open(path, "wb") as f:
+        shutil.copyfileobj(file, f, length=65536)
 
     return jsonify({
         "url": "/uploads/software/" + safe_name,
