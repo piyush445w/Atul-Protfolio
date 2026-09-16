@@ -1,0 +1,17 @@
+[
+  {
+    "id": "environment-art",
+    "name": "Environment Art",
+    "slug": "environment-art"
+  },
+  {
+    "id": "vr-environment",
+    "name": "VR Environment",
+    "slug": "vr-environment"
+  },
+  {
+    "id": "game-environment",
+    "name": "Game Environment",
+    "slug": "game-environment"
+  }
+]
