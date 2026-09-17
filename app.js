@@ -1190,7 +1190,7 @@
     function handleRouteChange() {
         const hash = window.location.hash.slice(1);
         if (hash.startsWith('project/')) {
-            const projectId = hash.split('/')[1];
+            const projectId = decodeURIComponent(hash.split('/')[1] || '');
             showProjectDetail(projectId);
         }
     }
