@@ -409,7 +409,7 @@ def api_admin_create_project():
     try:
         data = request.get_json(force=True)
         projects = _get_projects()
-        slug = data.get("slug") or _slugify(data.get("title", ""))
+        slug = _slugify(data.get("slug") or data.get("title", ""))
         if not slug:
             return jsonify({"error": "Slug required"}), 400
         for p in projects:
